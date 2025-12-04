@@ -1,0 +1,94 @@
+# ===========================================
+# Eclipse
+# ===========================================
+.classpath
+.project
+.settings/
+.metadata/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+
+# Local Eclipse launch configs
+*.launch
+
+# Eclipse Core
+# ---------------------------
+# These are generated automatically and should not be committed
+.cproject
+.buildpath
+
+# ===========================================
+# Java
+# ===========================================
+*.class
+*.jar
+*.war
+*.ear
+*.jmod
+
+# Logs
+*.log
+
+# ===========================================
+# OS / Editor Noise
+# ===========================================
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Linux
+*~
+
+# JetBrains (if user opens in IntelliJ)
+.idea/
+*.iml
+
+# VSCode (optional)
+.vscode/
+
+# ===========================================
+# Maven
+# ===========================================
+target/
+
+# Maven Wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# ===========================================
+# Gradle
+# ===========================================
+.gradle/
+build/
+out/
+
+# Gradle Wrapper (keep wrapper JAR)
+# gradle/wrapper/gradle-wrapper.jar
+
+# ===========================================
+# Distribution / Caches
+# ===========================================
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# Temporary files
+*.orig
+
+# ===========================================
+# Other project-specific directories (optional)
+# ===========================================
+# Generated sources
+generated/
+
+# Local runtime data
+run/
+runtime/
+cache/
+/.factorypath
