@@ -1,0 +1,21 @@
+MaterialDef Star {
+
+    MaterialParameters {
+        Float PointSize : 1.0
+        Color ColorParam : 1 1 1 1
+    }
+
+    Technique {
+        LightMode SinglePass
+
+        VertexShader GLSL120 : Materials/Shaders/Star.vert
+        FragmentShader GLSL120 : Materials/Shaders/Star.frag
+
+        RenderState {
+            Blend Additive
+            DepthWrite Off
+            PointSprite On
+        }
+    }
+
+}

@@ -27,7 +27,7 @@ public class StarLoader {
      * Load default star file: bubble.json
      */
     public static List<Star> loadStars() {
-        return loadStars("bubble.json");
+        return loadStars("smol-bubble.json");
     }
 
     /**

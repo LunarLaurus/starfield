@@ -14,30 +14,41 @@ import net.laurus.starmapper.util.StarLoader;
 @Slf4j
 public class Main {
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
+    /** Target FPS for update loop */
+    private static final int TARGET_FPS = 60;
 
+    private static final double FRAME_TIME_SEC = 1.0 / TARGET_FPS;
+
+    public static void main(String[] args) {
+
+        SwingUtilities.invokeLater(() -> {
             log.info("Starting Star Mapper UI");
 
-            // Load stars
+            // Load stars -----------------------------------------------------
             List<Star> stars = StarLoader.loadStars();
             log.info("Loaded {} stars", stars.size());
 
-            // Create frame
+            // Create UI frame ------------------------------------------------
             StarMapperFrame frame = new StarMapperFrame(stars);
             frame.setVisible(true);
 
-            // Access the main StarMapPanel
+            // Obtain main rendering panel
             StarMapPanel mapPanel = frame.getStarMapPanel();
 
-            // Create update loop (~60 FPS)
-            Timer updateTimer = new Timer(16, e -> {
-                // deltaSeconds fixed at 1/60
-                mapPanel.update(0.016);
-            });
-            updateTimer.start();
+            // ----------------------------------------------------------------
+            // Create animation/update loop using Swing's Timer (runs on EDT)
+            // ----------------------------------------------------------------
+            int delayMs = (int) (FRAME_TIME_SEC * 1000);
 
-            log.info("Star Mapper UI ready with update loop running");
+            Timer updateLoop = new Timer(delayMs, event -> {
+                mapPanel.update(FRAME_TIME_SEC);
+                // repaint is triggered inside update() when necessary
+            });
+
+            updateLoop.setRepeats(true);
+            updateLoop.start();
+
+            log.info("Star Mapper UI ready — update loop running at ~{} FPS", TARGET_FPS);
         });
     }
 

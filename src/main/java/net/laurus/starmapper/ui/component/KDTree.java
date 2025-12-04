@@ -3,13 +3,10 @@ package net.laurus.starmapper.ui.component;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import net.laurus.starmapper.model.Star;
 
-/**
- * Lightweight KD-tree for 3D points (only used for nearest/range queries). Not
- * highly optimized but fine for ~10k-100k points.
- */
 public class KDTree {
 
     private final Node root;
@@ -49,14 +46,24 @@ public class KDTree {
         return (axis == 0) ? s.getX() : (axis == 1) ? s.getY() : s.getZ();
     }
 
-    /**
-     * Nearest neighbour to (x,y,z) within optional maxDist (use
-     * Double.POSITIVE_INFINITY if none)
-     */
+    /** Single nearest */
     public Star nearest(double x, double y, double z, double maxDist) {
         NearestState st = new NearestState(maxDist * maxDist);
         searchNearest(root, x, y, z, st);
         return st.best;
+    }
+
+    /** k-nearest stars */
+    public List<Star> nearestK(double x, double y, double z, int k) {
+        PriorityQueue<StarDist> pq = new PriorityQueue<>(
+                Comparator.comparingDouble(sd -> -sd.distSq)
+        );
+        searchK(root, x, y, z, k, pq);
+        List<Star> result = new ArrayList<>();
+        while (!pq.isEmpty())
+            result.add(pq.poll().star);
+        result.sort(Comparator.comparingDouble(s -> distanceSq(s, x, y, z)));
+        return result;
     }
 
     private static class NearestState {
@@ -68,6 +75,19 @@ public class KDTree {
         NearestState(double maxSq) {
             this.bestSq = maxSq;
             this.best = null;
+        }
+
+    }
+
+    private static class StarDist {
+
+        Star star;
+
+        double distSq;
+
+        StarDist(Star s, double d) {
+            star = s;
+            distSq = d;
         }
 
     }
@@ -95,11 +115,39 @@ public class KDTree {
             searchNearest(second, x, y, z, st);
     }
 
+    private void
+            searchK(Node node, double x, double y, double z, int k, PriorityQueue<StarDist> pq) {
+        if (node == null)
+            return;
+        double dSq = distanceSq(node.star, x, y, z);
+        if (pq.size() < k)
+            pq.add(new StarDist(node.star, dSq));
+        else if (dSq < pq.peek().distSq) {
+            pq.poll();
+            pq.add(new StarDist(node.star, dSq));
+        }
+
+        int axis = node.axis;
+        double delta = getAxisVal(node.star, axis) - (axis == 0 ? x : (axis == 1 ? y : z));
+        Node first = (delta > 0) ? node.left : node.right;
+        Node second = (delta > 0) ? node.right : node.left;
+
+        searchK(first, x, y, z, k, pq);
+        if (second != null
+                && delta * delta < (pq.size() < k ? Double.POSITIVE_INFINITY : pq.peek().distSq))
+            searchK(second, x, y, z, k, pq);
+    }
+
+    private static double distanceSq(Star s, double x, double y, double z) {
+        double dx = s.getX() - x, dy = s.getY() - y, dz = s.getZ() - z;
+        return dx * dx + dy * dy + dz * dz;
+    }
+
     private double getAxisVal(Star s, int axis) {
         return (axis == 0) ? s.getX() : (axis == 1) ? s.getY() : s.getZ();
     }
 
-    /** Range query: return stars with squared distance <= rSq */
+    /** Range query: return stars within radius */
     public List<Star> range(double cx, double cy, double cz, double r) {
         double rSq = r * r;
         List<Star> out = new ArrayList<>();
@@ -111,16 +159,13 @@ public class KDTree {
             rangeSearch(Node node, double cx, double cy, double cz, double rSq, List<Star> out) {
         if (node == null)
             return;
-        double dx = node.star.getX() - cx;
-        double dy = node.star.getY() - cy;
-        double dz = node.star.getZ() - cz;
-        double dsq = dx * dx + dy * dy + dz * dz;
+        double dsq = distanceSq(node.star, cx, cy, cz);
         if (dsq <= rSq)
             out.add(node.star);
+
         int axis = node.axis;
         double delta = (axis == 0 ? cx - node.star.getX()
-                : axis == 1 ? cy - node.star.getY()
-                : cz - node.star.getZ());
+                : (axis == 1 ? cy - node.star.getY() : cz - node.star.getZ()));
         if (delta <= 0)
             rangeSearch(node.left, cx, cy, cz, rSq, out);
         if (Math.abs(delta) <= Math.sqrt(rSq))
