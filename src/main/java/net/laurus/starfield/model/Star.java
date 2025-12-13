@@ -1,4 +1,4 @@
-package net.laurus.starmapper.model;
+package net.laurus.starfield.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -27,5 +27,19 @@ public class Star {
 
     @JsonProperty("K")
     private StarColour colour;
+
+    @Data
+    public static final class StarColour {
+
+        @JsonProperty("r")
+        private double red;
+
+        @JsonProperty("g")
+        private double green;
+
+        @JsonProperty("b")
+        private double blue;
+
+    }
 
 }
