@@ -6,8 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.laurus.starfield.bus.EventBus;
-import net.laurus.starfield.events.StarfieldInputEvent;
+import net.laurus.starfield.app.bus.EventBus;
+import net.laurus.starfield.app.events.StarfieldInputEvent;
 
 @Slf4j
 @Service

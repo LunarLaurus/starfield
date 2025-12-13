@@ -1,4 +1,4 @@
-package net.laurus.starfield.ui.component;
+package net.laurus.starfield.app.ui.component;
 
 import java.util.Locale;
 

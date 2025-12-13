@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
 import net.laurus.starfield.MainApp;
-import net.laurus.starfield.bus.EventBus;
-import net.laurus.starfield.events.LoadDataEvent;
-import net.laurus.starfield.events.StarfieldInputEvent;
-import net.laurus.starfield.events.UpdateLabelsUiEvent;
+import net.laurus.starfield.app.bus.EventBus;
+import net.laurus.starfield.app.events.LoadDataEvent;
+import net.laurus.starfield.app.events.StarfieldInputEvent;
+import net.laurus.starfield.app.events.UpdateLabelsUiEvent;
 import net.laurus.starfield.model.Star;
 
 @Slf4j

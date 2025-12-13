@@ -1,4 +1,4 @@
-package net.laurus.starfield.ui.component;
+package net.laurus.starfield.app.ui.component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +14,9 @@ import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.laurus.starfield.MainApp;
-import net.laurus.starfield.events.UpdateLabelsUiEvent;
+import net.laurus.starfield.app.events.UpdateLabelsUiEvent;
+import net.laurus.starfield.app.ui.render.StarRenderer;
 import net.laurus.starfield.model.Star;
-import net.laurus.starfield.ui.render.StarRenderer;
 
 @Getter
 @Slf4j

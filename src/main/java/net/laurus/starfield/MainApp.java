@@ -1,7 +1,5 @@
 package net.laurus.starfield;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javafx.application.Application;
@@ -10,10 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.Getter;
-import net.laurus.starfield.bus.EventBus;
+import net.laurus.starfield.app.SpringBootLauncher;
+import net.laurus.starfield.app.bus.EventBus;
+import net.laurus.starfield.app.events.StarfieldInputEvent;
 import net.laurus.starfield.controller.MainFxController;
 import net.laurus.starfield.controller.SpringController;
-import net.laurus.starfield.events.StarfieldInputEvent;
 import net.laurus.starfield.service.InputService;
 
 @Getter
@@ -74,15 +73,6 @@ public class MainApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    @SpringBootApplication(scanBasePackages = "net.laurus.starfield")
-    private static class SpringBootLauncher {
-
-        public static ConfigurableApplicationContext startSpring(String[] args) {
-            return SpringApplication.run(SpringBootLauncher.class, args);
-        }
-
     }
 
 }

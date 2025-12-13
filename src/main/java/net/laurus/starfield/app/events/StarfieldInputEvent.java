@@ -1,4 +1,4 @@
-package net.laurus.starfield.events;
+package net.laurus.starfield.app.events;
 
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;

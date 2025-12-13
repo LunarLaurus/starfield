@@ -1,4 +1,4 @@
-package net.laurus.starfield.events;
+package net.laurus.starfield.app.events;
 
 import java.time.Instant;
 import java.util.UUID;

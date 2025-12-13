@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.laurus.starfield.bus.EventBus;
-import net.laurus.starfield.events.DataLoadedEvent;
-import net.laurus.starfield.events.LoadDataEvent;
+import net.laurus.starfield.app.bus.EventBus;
+import net.laurus.starfield.app.events.DataLoadedEvent;
+import net.laurus.starfield.app.events.LoadDataEvent;
 import net.laurus.starfield.model.Star;
 import net.laurus.starfield.service.factory.StarFactory;
 import net.laurus.starfield.service.loader.StarDataLoader;

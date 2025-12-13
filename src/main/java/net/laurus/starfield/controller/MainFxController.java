@@ -12,8 +12,8 @@ import javafx.scene.layout.Pane;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.laurus.starfield.app.ui.component.StarCanvas3DView;
 import net.laurus.starfield.model.Star;
-import net.laurus.starfield.ui.component.StarCanvas3DView;
 
 @Getter
 @Slf4j

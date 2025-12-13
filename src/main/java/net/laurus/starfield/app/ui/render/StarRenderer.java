@@ -1,12 +1,12 @@
-package net.laurus.starfield.ui.render;
+package net.laurus.starfield.app.ui.render;
 
 import java.util.List;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import net.laurus.starfield.app.ui.component.Camera3D;
 import net.laurus.starfield.model.Star;
-import net.laurus.starfield.ui.component.Camera3D;
 
 public class StarRenderer {
 
