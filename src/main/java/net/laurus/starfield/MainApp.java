@@ -1,5 +1,7 @@
 package net.laurus.starfield;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javafx.application.Application;
@@ -13,7 +15,6 @@ import net.laurus.starfield.controller.MainFxController;
 import net.laurus.starfield.controller.SpringController;
 import net.laurus.starfield.events.StarfieldInputEvent;
 import net.laurus.starfield.service.InputService;
-import net.laurus.starfield.spring.SpringBootLauncher;
 
 @Getter
 public class MainApp extends Application {
@@ -73,6 +74,15 @@ public class MainApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @SpringBootApplication(scanBasePackages = "net.laurus.starfield")
+    private static class SpringBootLauncher {
+
+        public static ConfigurableApplicationContext startSpring(String[] args) {
+            return SpringApplication.run(SpringBootLauncher.class, args);
+        }
+
     }
 
 }

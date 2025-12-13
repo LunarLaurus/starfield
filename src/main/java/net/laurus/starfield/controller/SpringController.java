@@ -3,15 +3,18 @@ package net.laurus.starfield.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
+import net.laurus.starfield.MainApp;
 import net.laurus.starfield.bus.EventBus;
 import net.laurus.starfield.events.LoadDataEvent;
 import net.laurus.starfield.events.StarfieldInputEvent;
+import net.laurus.starfield.events.UpdateLabelsUiEvent;
 import net.laurus.starfield.model.Star;
-import net.laurus.starfield.service.InputService;
 
 @Slf4j
 @Component
@@ -20,16 +23,36 @@ public class SpringController {
     @Autowired
     private EventBus eventBus;
 
-    @Autowired
-    private InputService inputService;
-
     private MainFxController fxController;
 
     /** Inject MainFxController and setup load button */
     public void setFxController(MainFxController fxController) {
         this.fxController = fxController;
         fxController.getLoadButton().setOnAction(e -> onLoadClicked());
+
+        fxController
+                .getDistanceSlider()
+                .valueProperty()
+                .addListener((obs, oldVal, newVal) -> onSliderChanged(newVal.doubleValue()));
+
+        MainApp.INSTANCE
+                .getInputService()
+                .registerInput(
+                        fxController.getScene(), fxController.getStarCanvasView().getCanvas()
+                );
         log.info("MainFxController injected and load button configured");
+    }
+
+    /** Handle filtering slider */
+    public void onSliderChanged(double newVal) {
+
+        if (fxController == null) {
+            log.warn("Filter slider changed but fxController is null");
+            return;
+        }
+
+        log.debug("Filter Slider clicked.");
+        fxController.updateSlider(newVal);
     }
 
     /** Handle load button click */
@@ -45,6 +68,18 @@ public class SpringController {
         eventBus.publish(new LoadDataEvent());
     }
 
+    /** Set stars in the FX canvas */
+    public void setStars(List<Star> stars) {
+
+        if (fxController == null) {
+            log.warn("Attempted to set stars but fxController is null");
+            return;
+        }
+
+        log.info("Setting {} stars in FX canvas", stars.size());
+        fxController.setStars(stars);
+    }
+
     /** Render stars in the FX canvas */
     public void renderStars(List<Star> stars) {
 
@@ -55,6 +90,22 @@ public class SpringController {
 
         log.info("Rendering {} stars in FX canvas", stars.size());
         fxController.renderStars(stars);
+    }
+
+    @EventListener
+    public void updateLabels(UpdateLabelsUiEvent uiEvent) {
+
+        if (fxController == null) {
+            log
+                    .warn(
+                            "Received label update event but fxController is null: {}", uiEvent
+                                    .getEventId()
+                    );
+            return;
+        }
+
+        Platform.runLater(() -> { fxController.updateLabels(); });
+
     }
 
     /** Handle input events asynchronously */
