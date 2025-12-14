@@ -8,16 +8,22 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.laurus.starfield.app.ui.component.StarCanvas3DView;
+import net.laurus.starfield.app.ui.component.StarCanvas3D;
 import net.laurus.starfield.model.Star;
+import net.laurus.starfield.service.factory.StarFactory;
 
 @Getter
 @Slf4j
 public class MainFxController {
+
+    @Getter
+    private List<Star> loadedStars;
 
     @Setter
     private Scene scene;
@@ -40,12 +46,12 @@ public class MainFxController {
     @FXML
     private Slider distanceSlider;
 
-    private StarCanvas3DView starCanvasView;
+    private StarCanvas3D starCanvasView;
 
     @FXML
     public void initialize() {
         statusLabel.setText("No data loaded.");
-        starCanvasView = new StarCanvas3DView(starPanel);
+        starCanvasView = new StarCanvas3D(starPanel);
 
         // Request focus so key events go to the canvas
         loadButton.setFocusTraversable(false);
@@ -99,7 +105,9 @@ public class MainFxController {
 
     public void setStars(List<Star> stars) {
         log.info("Settings {} stars in StarCanvas3DView", stars.size());
-        starCanvasView.setStars(stars);
+        loadedStars = stars;
+        starCanvasView.setStars(loadedStars);
+
     }
 
     public void renderStars(List<Star> stars) {
@@ -118,16 +126,34 @@ public class MainFxController {
 
         if (starCanvasView != null) {
             log.info("Slider action");
-            starCanvasView.filterStarsByDistance(val);
+            starCanvasView.filterStarsByDistance(val, StarFactory.SOL);
         }
 
     }
 
-    @FXML
     public void handleKeyPressed(KeyEvent e) {
-        log.info("Key pressed: {}", e.getCode());
-        starCanvasView.handleKeyPressed(e);
-        updateLabels();
+
+        if (starCanvasView != null) {
+            starCanvasView.getInputHandler().handleKeyPressed(e);
+        }
+
+    }
+
+    public void handleMouseScroll(ScrollEvent e) {
+
+        if (starCanvasView != null) {
+            starCanvasView.getInputHandler().handleMouseScroll(e);
+        }
+
+    }
+
+    public void handleMouseMoved(MouseEvent e) {
+
+        if (starCanvasView != null) {
+
+            starCanvasView.getInputHandler().handleMouseMoved(e);
+        }
+
     }
 
 }

@@ -3,22 +3,21 @@ package net.laurus.starfield.service.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import net.laurus.starfield.model.Star;
 
 /**
  * Creates synthetic stars and applies validation rules.
  */
-@Component
 @Slf4j
 public class StarFactory {
+
+    public static Star SOL = createSol();
 
     /**
      * Creates the Sol star at the origin.
      */
-    public Star createSol() {
+    private static Star createSol() {
 
         Star sol = new Star();
         sol.setId(0);
@@ -41,7 +40,7 @@ public class StarFactory {
     /**
      * Filters invalid near-origin stars (0–2 cube).
      */
-    public List<Star> filterInvalidNearOrigin(List<Star> stars) {
+    public static List<Star> filterInvalidNearOrigin(List<Star> stars) {
 
         List<Star> valid = new ArrayList<>();
         int excluded = 0;

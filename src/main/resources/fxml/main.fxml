@@ -4,50 +4,43 @@
 <?import javafx.scene.control.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="net.laurus.starfield.controller.MainFxController">
+	xmlns:fx="http://javafx.com/fxml"
+	fx:controller="net.laurus.starfield.controller.MainFxController">
 
-    <top>
-        <VBox spacing="6" style="-fx-padding: 10;">
-            
-            <!-- Toolbar row -->
-            <HBox spacing="10">
-                <Button fx:id="loadButton" text="Load Stars" />
-                
-                <Label fx:id="statusLabel"
-                       text="Status"
-                       style="-fx-font-size: 16px;" />
-                
-                <Label text="Max Distance:" />
-                
-                <Slider fx:id="distanceSlider"
-                        min="0" max="2000" value="2000"
-                        blockIncrement="1"
-                        majorTickUnit="50"
-                        minorTickCount="5"
-                        showTickMarks="true"
-                        showTickLabels="true"
-                        HBox.hgrow="ALWAYS"
-                        maxWidth="Infinity" />
-            </HBox>
+	<top>
+		<VBox spacing="6" style="-fx-padding: 10;">
 
-            <!-- Info row -->
-            <HBox spacing="10">
-                <Label fx:id="coordsLabel"
-                       text="Coordinates X:x, Y:y, Z:z"
-                       style="-fx-font-size: 16px;" />
-                
-                <Label fx:id="cameraDetailsLabel"
-                       text="Camera Info: xxxxxx"
-                       style="-fx-font-size: 16px;" />
-            </HBox>
+			<!-- Toolbar row -->
+			<HBox spacing="10">
+				<Button fx:id="loadButton" text="Load Stars" />
 
-        </VBox>
-    </top>
+				<Label fx:id="statusLabel" text="Status"
+					style="-fx-font-size: 16px;" />
 
-    <center>
-        <Pane fx:id="starPanel"
-              style="-fx-background-color: black;" />
-    </center>
+				<Label text="Max Distance:" />
+
+				<Slider fx:id="distanceSlider" min="0" max="2000"
+					value="2000" blockIncrement="1" majorTickUnit="50"
+					minorTickCount="5" showTickMarks="true" showTickLabels="true"
+					HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+			</HBox>
+
+			<!-- Info row -->
+			<HBox spacing="10">
+				<Label fx:id="coordsLabel" text="Coordinates X:x, Y:y, Z:z"
+					style="-fx-font-size: 16px;" />
+
+				<Label fx:id="cameraDetailsLabel" text="Camera Info: xxxxxx"
+					style="-fx-font-size: 16px;" />
+			</HBox>
+
+		</VBox>
+	</top>
+
+	<center>
+		<Pane fx:id="starPanel" style="-fx-background-color: black;"
+			focusTraversable="true" />
+	</center>
+
 
 </BorderPane>

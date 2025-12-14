@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import net.laurus.starfield.app.SpringBootLauncher;
 import net.laurus.starfield.app.bus.EventBus;
-import net.laurus.starfield.app.events.StarfieldInputEvent;
+import net.laurus.starfield.app.events.SpringPostInitEvent;
 import net.laurus.starfield.controller.MainFxController;
 import net.laurus.starfield.controller.SpringController;
 import net.laurus.starfield.service.InputService;
@@ -32,6 +32,7 @@ public class MainApp extends Application {
 
     @Override
     public void init() {
+        INSTANCE = this;
         springContext = SpringBootLauncher
                 .startSpring(getParameters().getRaw().toArray(String[]::new));
 
@@ -39,7 +40,6 @@ public class MainApp extends Application {
         inputService = springContext.getBean(InputService.class);
         controllerSpring = springContext.getBean(SpringController.class);
 
-        INSTANCE = this;
     }
 
     @Override
@@ -58,11 +58,11 @@ public class MainApp extends Application {
 
         Scene scene = new Scene(root, 800, 600);
         stage.setTitle("Starfield");
-        scene.setOnKeyPressed(e -> eventBus.publish(StarfieldInputEvent.keyPressed(e)));
-        scene.setOnKeyReleased(e -> eventBus.publish(StarfieldInputEvent.keyReleased(e)));
         stage.setScene(scene);
         controllerFx.setScene(scene);
         stage.show();
+
+        eventBus.publish(new SpringPostInitEvent());
 
     }
 

@@ -30,8 +30,6 @@ public class StarService {
 
     private final StarNameRepository names;
 
-    private final StarFactory factory;
-
     private final EventBus eventBus;
 
     private List<Star> cache;
@@ -76,9 +74,9 @@ public class StarService {
 
         }
 
-        stars = factory.filterInvalidNearOrigin(stars);
+        stars = StarFactory.filterInvalidNearOrigin(stars);
 
-        sol = factory.createSol();
+        sol = StarFactory.SOL;
         stars.add(sol);
 
         cache = stars;

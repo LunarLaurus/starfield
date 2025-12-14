@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.laurus.starfield.MainApp;
 import net.laurus.starfield.app.bus.EventBus;
 import net.laurus.starfield.app.events.LoadDataEvent;
+import net.laurus.starfield.app.events.SpringPostInitEvent;
 import net.laurus.starfield.app.events.StarfieldInputEvent;
 import net.laurus.starfield.app.events.UpdateLabelsUiEvent;
 import net.laurus.starfield.model.Star;
@@ -34,13 +35,16 @@ public class SpringController {
                 .getDistanceSlider()
                 .valueProperty()
                 .addListener((obs, oldVal, newVal) -> onSliderChanged(newVal.doubleValue()));
+        log.info("MainFxController injected and load button configured");
+    }
 
+    @EventListener
+    public void postInit(SpringPostInitEvent event) {
         MainApp.INSTANCE
                 .getInputService()
                 .registerInput(
                         fxController.getScene(), fxController.getStarCanvasView().getCanvas()
                 );
-        log.info("MainFxController injected and load button configured");
     }
 
     /** Handle filtering slider */
@@ -120,20 +124,30 @@ public class SpringController {
 
         switch (event.getType()) {
             case KEY_PRESSED -> {
-                log.info("Handling KEY_PRESSED: {}", event.getKeyEvent().getCode());
-                fxController.getStarCanvasView().handleKeyPressed(event.getKeyEvent());
+                log.debug("Handling KEY_PRESSED: {}", event.getKeyEvent().getCode());
+                fxController.handleKeyPressed(event.getKeyEvent());
             }
             case KEY_RELEASED -> {
-                log.info("Handling KEY_RELEASED: {}", event.getKeyEvent().getCode());
+                log.debug("Handling KEY_RELEASED: {}", event.getKeyEvent().getCode());
                 // Optional: implement if needed
             }
             case MOUSE_SCROLL -> {
                 log.debug("Handling MOUSE_SCROLL: deltaY={}", event.getScrollEvent().getDeltaY());
-                fxController.getStarCanvasView().handleMouseScroll(event.getScrollEvent());
+                fxController.handleMouseScroll(event.getScrollEvent());
+            }
+            case MOUSE_MOVED -> {
+                log
+                        .debug(
+                                "Handling MOUSE_MOVED: ({}, {})", event
+                                        .getMouseEvent()
+                                        .getX(), event.getMouseEvent().getY()
+                        );
+
+                Platform.runLater(() -> { fxController.handleMouseMoved(event.getMouseEvent()); });
             }
             case MOUSE_DRAG -> {
                 log
-                        .debug(
+                        .info(
                                 "Handling MOUSE_DRAG at ({}, {})", event
                                         .getMouseEvent()
                                         .getX(), event.getMouseEvent().getY()

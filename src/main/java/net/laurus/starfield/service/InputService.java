@@ -34,19 +34,22 @@ public class InputService {
 
         // Keyboard events
         scene.setOnKeyPressed(e -> {
-            log.info("Key pressed: {}", e.getCode());
+            log.debug("Key pressed: {}", e.getCode());
             eventBus.publish(StarfieldInputEvent.keyPressed(e));
         });
-
         scene.setOnKeyReleased(e -> {
-            log.info("Key released: {}", e.getCode());
+            log.debug("Key released: {}", e.getCode());
             eventBus.publish(StarfieldInputEvent.keyReleased(e));
         });
 
         // Mouse events
         canvas.setOnMouseDragged(e -> {
             log.debug("Mouse dragged at ({}, {})", e.getX(), e.getY());
-            eventBus.publish(StarfieldInputEvent.mouseDragged(e));
+            eventBus.publish(StarfieldInputEvent.mouseEvent(e));
+        });
+        canvas.setOnMouseMoved(e -> {
+            log.debug("Mouse moved at ({}, {})", e.getX(), e.getY());
+            eventBus.publish(StarfieldInputEvent.mouseEvent(e));
         });
 
         canvas.setOnScroll(e -> {

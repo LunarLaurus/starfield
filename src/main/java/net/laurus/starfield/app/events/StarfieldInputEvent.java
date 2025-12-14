@@ -14,7 +14,8 @@ public class StarfieldInputEvent extends StarfieldEvent {
         KEY_PRESSED,
         KEY_RELEASED,
         MOUSE_DRAG,
-        MOUSE_SCROLL
+        MOUSE_SCROLL,
+        MOUSE_MOVED
     }
 
     private final InputType type;
@@ -39,18 +40,30 @@ public class StarfieldInputEvent extends StarfieldEvent {
     }
 
     public static StarfieldInputEvent keyPressed(KeyEvent e) {
-        log.info("Creating KEY_PRESSED event: key={}", e.getCode());
+        log.debug("Creating KEY_PRESSED event: key={}", e.getCode());
         return new StarfieldInputEvent(InputType.KEY_PRESSED, e, null, null);
     }
 
     public static StarfieldInputEvent keyReleased(KeyEvent e) {
-        log.info("Creating KEY_RELEASED event: key={}", e.getCode());
+        log.debug("Creating KEY_RELEASED event: key={}", e.getCode());
         return new StarfieldInputEvent(InputType.KEY_RELEASED, e, null, null);
     }
 
-    public static StarfieldInputEvent mouseDragged(MouseEvent e) {
-        log.debug("Creating MOUSE_DRAG event at ({}, {})", e.getX(), e.getY());
-        return new StarfieldInputEvent(InputType.MOUSE_DRAG, null, e, null);
+    public static StarfieldInputEvent mouseEvent(MouseEvent e) {
+
+        if (e.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+            log.debug("Creating MOUSE_DRAG event at ({}, {})", e.getX(), e.getY());
+            return new StarfieldInputEvent(InputType.MOUSE_DRAG, null, e, null);
+        }
+        else if (e.getEventType().equals(MouseEvent.MOUSE_MOVED)) {
+            log.debug("Creating MOUSE_MOVED event at ({}, {})", e.getX(), e.getY());
+            return new StarfieldInputEvent(InputType.MOUSE_MOVED, null, e, null);
+        }
+        else {
+            log.info("Creating MOUSE_DEFAULT: " + e.getEventType().getName());
+            return new StarfieldInputEvent(InputType.MOUSE_MOVED, null, e, null);
+        }
+
     }
 
     public static StarfieldInputEvent mouseScrolled(ScrollEvent e) {
