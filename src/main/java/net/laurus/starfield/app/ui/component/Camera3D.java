@@ -107,4 +107,36 @@ public class Camera3D {
                 );
     }
 
+    /**
+     * Returns the depth (distance along the camera's forward axis) of a point
+     * relative to this camera. Used for Z-sorting stars.
+     *
+     * @param px X world coordinate
+     * @param py Y world coordinate
+     * @param pz Z world coordinate
+     * @return depth along camera's forward axis
+     */
+    public double getDepth(Double px, Double py, Double pz) {
+
+        if (px == null || py == null || pz == null) {
+            return Double.NaN;
+        }
+
+        // Translate point to camera space
+        double dx = px - x;
+        double dy = py - y;
+        double dz = pz - z;
+
+        // Precompute rotation radians
+        double radYaw = Math.toRadians(-yaw);
+        double radPitch = Math.toRadians(-pitch);
+
+        // Rotate around Y (yaw) and X (pitch) to align with camera forward
+        double zAfterYaw = dx * Math.sin(radYaw) + dz * Math.cos(radYaw);
+        double z2 = dy * Math.sin(radPitch) + zAfterYaw * Math.cos(radPitch);
+
+        // Ensure minimal positive depth
+        return Math.max(z2, 0.1);
+    }
+
 }

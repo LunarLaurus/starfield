@@ -1,5 +1,6 @@
 package net.laurus.starfield.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
@@ -7,33 +8,33 @@ import lombok.Data;
 @Data
 public class Star {
 
-    private static final double PARSEC_TO_LY = 3.26; // 1 parsec = 3.26156 light-years
+    private static final double PARSEC_TO_LY = 3.26156;
 
     @JsonProperty("i")
-    private int id;
+    private Integer id;
 
     @JsonProperty("n")
     private String name;
 
-    // Internal light-year values
-    private int x;
+    // Internal coordinates (light-years)
+    private Double x;
 
-    private int y;
+    private Double y;
 
-    private int z;
+    private Double z;
 
     // Original parsec values
-    private double xParsec;
+    private Double xParsec;
 
-    private double yParsec;
+    private Double yParsec;
 
-    private double zParsec;
+    private Double zParsec;
 
     @JsonProperty("p")
-    private double distanceInParsecs;
+    private Double distanceInParsecs;
 
     @JsonProperty("N")
-    private double magnitude;
+    private Double magnitude;
 
     @JsonProperty("K")
     private StarColour colour;
@@ -42,56 +43,83 @@ public class Star {
     public static final class StarColour {
 
         @JsonProperty("r")
-        private double red;
+        private Double red;
 
         @JsonProperty("g")
-        private double green;
+        private Double green;
 
         @JsonProperty("b")
-        private double blue;
+        private Double blue;
 
     }
 
-    // Map JSON parsec fields to internal LY fields
+    /*
+     * ---------------------------- JSON → internal conversion
+     * ----------------------------
+     */
+
     @JsonProperty("x")
-    public void setXFromParsec(double xParsec) {
+    public void setXFromParsec(Double xParsec) {
         this.xParsec = xParsec;
-        this.x = (int) (xParsec * PARSEC_TO_LY);
+        this.x = convertParsecToLy(xParsec);
     }
 
     @JsonProperty("y")
-    public void setYFromParsec(double yParsec) {
+    public void setYFromParsec(Double yParsec) {
         this.yParsec = yParsec;
-        this.y = (int) (yParsec * PARSEC_TO_LY);
+        this.y = convertParsecToLy(yParsec);
     }
 
     @JsonProperty("z")
-    public void setZFromParsec(double zParsec) {
+    public void setZFromParsec(Double zParsec) {
         this.zParsec = zParsec;
-        this.z = (int) (zParsec * PARSEC_TO_LY);
+        this.z = convertParsecToLy(zParsec);
     }
 
-    /**
-     * Returns the Euclidean distance to another star in light-years. If 'other' is
-     * null, distance is calculated from Sol at (0,0,0). Handles null coordinates
-     * safely.
+    private static Double convertParsecToLy(Double parsec) {
+        return (parsec == null) ? null : parsec * PARSEC_TO_LY;
+    }
+
+    /*
+     * ---------------------------- Validation helpers ----------------------------
      */
-    public int distanceTo(Star other) {
-        // Reference coordinates (Sol if other is null)
-        int refX = (int) ((other != null && !Double.isNaN(other.getX())) ? other.getX() : 0.0);
-        int refY = (int) ((other != null && !Double.isNaN(other.getY())) ? other.getY() : 0.0);
-        int refZ = (int) ((other != null && !Double.isNaN(other.getZ())) ? other.getZ() : 0.0);
 
-        // Current star coordinates
-        int thisX = (int) (!Double.isNaN(this.getX()) ? this.getX() : 0.0);
-        int thisY = (int) (!Double.isNaN(this.getY()) ? this.getY() : 0.0);
-        int thisZ = (int) (!Double.isNaN(this.getZ()) ? this.getZ() : 0.0);
+    @JsonIgnore
+    public boolean hasValidPosition() {
+        return x != null && y != null && z != null;
+    }
 
-        int dx = thisX - refX;
-        int dy = thisY - refY;
-        int dz = thisZ - refZ;
+    /*
+     * ---------------------------- Distance calculation
+     * ----------------------------
+     */
 
-        return (int) Math.sqrt(dx * dx + dy * dy + dz * dz);
+    /**
+     * Returns the Euclidean distance to another star in light-years. If
+     * {@code other} is null, distance is calculated from Sol (0,0,0). Returns
+     * {@link Double#NaN} if this star has no valid position.
+     */
+    public double distanceTo(Star other) {
+
+        if (!hasValidPosition()) {
+            return Double.NaN;
+        }
+
+        double refX = 0.0;
+        double refY = 0.0;
+        double refZ = 0.0;
+
+        if (other != null && other.hasValidPosition()) {
+            refX = other.x;
+            refY = other.y;
+            refZ = other.z;
+        }
+
+        double dx = x - refX;
+        double dy = y - refY;
+        double dz = z - refZ;
+
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
 }

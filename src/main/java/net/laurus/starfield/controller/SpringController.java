@@ -8,13 +8,16 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javafx.application.Platform;
+import javafx.scene.control.CheckBox;
 import lombok.extern.slf4j.Slf4j;
 import net.laurus.starfield.MainApp;
 import net.laurus.starfield.app.bus.EventBus;
 import net.laurus.starfield.app.events.LoadDataEvent;
 import net.laurus.starfield.app.events.SpringPostInitEvent;
 import net.laurus.starfield.app.events.StarfieldInputEvent;
+import net.laurus.starfield.app.events.ToggleGridPlaneEvent;
 import net.laurus.starfield.app.events.UpdateLabelsUiEvent;
+import net.laurus.starfield.model.GridPlane;
 import net.laurus.starfield.model.Star;
 
 @Slf4j
@@ -29,13 +32,49 @@ public class SpringController {
     /** Inject MainFxController and setup load button */
     public void setFxController(MainFxController fxController) {
         this.fxController = fxController;
+        setupListenersForJavaFXController();
+        log.info("MainFxController injected and load button configured");
+    }
+
+    private final void setupListenersForJavaFXController() {
+        // Button action
         fxController.getLoadButton().setOnAction(e -> onLoadClicked());
 
+        // Slider listener
         fxController
                 .getDistanceSlider()
                 .valueProperty()
                 .addListener((obs, oldVal, newVal) -> onSliderChanged(newVal.doubleValue()));
-        log.info("MainFxController injected and load button configured");
+
+        // GridPlane checkboxes
+        setupGridPlaneListener(fxController.getXyPlaneCheckBox(), GridPlane.XY);
+        setupGridPlaneListener(fxController.getXzPlaneCheckBox(), GridPlane.XZ);
+        setupGridPlaneListener(fxController.getYzPlaneCheckBox(), GridPlane.YZ);
+
+        fxController
+                .getPaletteComboBox()
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener((obs, oldVal, newVal) ->
+                {
+
+                    if (newVal != null) {
+                        fxController
+                                .getStarCanvasView()
+                                .getGridRenderer()
+                                .getColourManager()
+                                .setPalette(newVal);
+                        fxController.getStarCanvasView().redraw();
+                    }
+
+                });
+    }
+
+    /** Helper to attach checkbox listener for a grid plane */
+    private void setupGridPlaneListener(CheckBox checkBox, GridPlane plane) {
+        checkBox
+                .selectedProperty()
+                .addListener((obs, oldVal, newVal) -> fxController.toggleGrid(plane));
     }
 
     @EventListener
@@ -94,6 +133,23 @@ public class SpringController {
 
         log.info("Rendering {} stars in FX canvas", stars.size());
         fxController.renderStars(stars);
+    }
+
+    @EventListener
+    public void toggleGrid(ToggleGridPlaneEvent event) {
+        log.info("Caught ToggleGridPlaneEvent");
+        toggleGrid(event.getPlane());
+    }
+
+    public void toggleGrid(GridPlane plane) {
+
+        if (fxController == null) {
+            log.warn("Attempted to render stars but fxController is null");
+            return;
+        }
+
+        log.info("Updating Grid Plane {} in FX canvas", plane);
+        fxController.toggleGrid(plane);
     }
 
     @EventListener

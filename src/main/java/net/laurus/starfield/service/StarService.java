@@ -74,7 +74,9 @@ public class StarService {
 
         }
 
-        stars = StarFactory.filterInvalidNearOrigin(stars);
+        stars = StarFactory.filterStarsWithNullPosition(stars);
+        stars = StarFactory.filterOriginClusterArtifacts(stars);
+        stars = StarFactory.filterNearOriginArtifacts(stars, 2D);
 
         sol = StarFactory.SOL;
         stars.add(sol);

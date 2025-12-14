@@ -14,6 +14,7 @@ import net.laurus.starfield.app.events.SpringPostInitEvent;
 import net.laurus.starfield.controller.MainFxController;
 import net.laurus.starfield.controller.SpringController;
 import net.laurus.starfield.service.InputService;
+import net.laurus.starfield.service.repo.StarNameRepository;
 
 @Getter
 public class MainApp extends Application {
@@ -23,6 +24,8 @@ public class MainApp extends Application {
     private ConfigurableApplicationContext springContext;
 
     private EventBus eventBus;
+
+    private StarNameRepository starNames;
 
     private InputService inputService;
 
@@ -39,6 +42,7 @@ public class MainApp extends Application {
         eventBus = springContext.getBean(EventBus.class);
         inputService = springContext.getBean(InputService.class);
         controllerSpring = springContext.getBean(SpringController.class);
+        starNames = springContext.getBean(StarNameRepository.class);
 
     }
 

@@ -25,6 +25,40 @@
 					HBox.hgrow="ALWAYS" maxWidth="Infinity" />
 			</HBox>
 
+			<!-- Grid Plane Controls -->
+			<HBox spacing="20" alignment="CENTER_LEFT">
+
+				<Label fx:id="gridPanelLabel" text="Grid Control: "
+					style="-fx-font-size: 16px;" />
+
+				<!-- XZ Plane -->
+				<HBox spacing="5" alignment="CENTER">
+					<CheckBox fx:id="xzPlaneCheckBox" />
+					<Label text="XZ Plane" style="-fx-font-size: 14px;" />
+				</HBox>
+
+				<!-- XY Plane -->
+				<HBox spacing="5" alignment="CENTER">
+					<CheckBox fx:id="xyPlaneCheckBox" />
+					<Label text="XY Plane" style="-fx-font-size: 14px;" />
+				</HBox>
+
+				<!-- YZ Plane -->
+				<HBox spacing="5" alignment="CENTER">
+					<CheckBox fx:id="yzPlaneCheckBox" />
+					<Label text="YZ Plane" style="-fx-font-size: 14px;" />
+				</HBox>
+
+				<!-- Colour Scheme Selector -->
+				<HBox spacing="5" alignment="CENTER">
+					<Label text="Colour Scheme:" style="-fx-font-size: 14px;" />
+					<ComboBox fx:id="paletteComboBox" prefWidth="150" />
+				</HBox>
+
+			</HBox>
+
+
+
 			<!-- Info row -->
 			<HBox spacing="10">
 				<Label fx:id="coordsLabel" text="Coordinates X:x, Y:y, Z:z"

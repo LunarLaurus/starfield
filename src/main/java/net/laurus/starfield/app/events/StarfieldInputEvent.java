@@ -40,7 +40,7 @@ public class StarfieldInputEvent extends StarfieldEvent {
     }
 
     public static StarfieldInputEvent keyPressed(KeyEvent e) {
-        log.debug("Creating KEY_PRESSED event: key={}", e.getCode());
+        log.info("Creating KEY_PRESSED event: key={}", e.getCode());
         return new StarfieldInputEvent(InputType.KEY_PRESSED, e, null, null);
     }
 

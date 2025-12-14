@@ -12,13 +12,15 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.laurus.starfield.MainApp;
 import net.laurus.starfield.app.events.UpdateLabelsUiEvent;
+import net.laurus.starfield.app.manager.GridPlaneManager;
 import net.laurus.starfield.app.ui.handler.StarCanvasInputHandler;
 import net.laurus.starfield.app.ui.handler.StarFilterService;
 import net.laurus.starfield.app.ui.handler.StarHoverService;
 import net.laurus.starfield.app.ui.handler.StarInfoPopup;
-import net.laurus.starfield.app.ui.handler.StarSelectionService;
 import net.laurus.starfield.app.ui.render.GridRenderer;
-import net.laurus.starfield.app.ui.render.StarRenderer;
+import net.laurus.starfield.app.ui.render.StarProjector;
+import net.laurus.starfield.app.ui.render.StarRenderer3D;
+import net.laurus.starfield.model.GridPlane;
 import net.laurus.starfield.model.Star;
 
 /**
@@ -35,11 +37,9 @@ public class StarCanvas3D {
 
     private final Camera3D camera;
 
-    private final StarRenderer starRenderer;
+    private final StarRenderer3D starRenderer;
 
     private final GridRenderer gridRenderer;
-
-    private final StarSelectionService selectionService;
 
     private final StarFilterService filterService;
 
@@ -54,6 +54,10 @@ public class StarCanvas3D {
 
     private boolean showGrid = true;
 
+    private GridPlaneManager gridPlanes = new GridPlaneManager();
+
+    private StarProjector starProjector;
+
     public StarCanvas3D(Pane container) {
         this.canvas = new Canvas();
         this.canvas.setFocusTraversable(true);
@@ -64,9 +68,9 @@ public class StarCanvas3D {
 
         this.camera = new Camera3D();
 
-        this.starRenderer = new StarRenderer(canvas, camera);
+        this.starProjector = new StarProjector(canvas, camera);
+        this.starRenderer = new StarRenderer3D(canvas, starProjector);
         this.gridRenderer = new GridRenderer(camera);
-        this.selectionService = new StarSelectionService(camera);
         this.filterService = new StarFilterService(this::renderStars);
 
         StarInfoPopup starPopup = new StarInfoPopup();
@@ -78,6 +82,11 @@ public class StarCanvas3D {
         canvas.heightProperty().addListener((o, a, b) -> redraw());
 
         log.info("StarCanvas3DView initialized");
+    }
+
+    public void toggleGrid(GridPlane plane) {
+        gridPlanes.toggle(plane);
+        redraw();
     }
 
     /**
@@ -98,9 +107,10 @@ public class StarCanvas3D {
     /**
      * Renders the provided stars.
      */
-    public void renderStars(List<Star> stars) {
-        this.visibleStars = stars;
-        canvas.setUserData(stars);
+    public void renderStars(List<Star> visibleStars) {
+        this.visibleStars = visibleStars;
+        hoverService.setStars(visibleStars);
+        canvas.setUserData(visibleStars);
         redraw();
     }
 
@@ -117,8 +127,17 @@ public class StarCanvas3D {
             gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
             if (showGrid) {
-                double maxDistance = filterService.getCurrentMaxDistance();
-                gridRenderer.draw(gc, canvas, maxDistance);
+                // double maxDistance = filterService.getCurrentMaxDistance();
+                double maxDistance = 2500;
+
+                for (GridPlane plane : GridPlane.values()) {
+
+                    if (gridPlanes.isEnabled(plane)) {
+                        gridRenderer.draw(gc, canvas, maxDistance, plane);
+                    }
+
+                }
+
             }
 
             if (visibleStars != null) {

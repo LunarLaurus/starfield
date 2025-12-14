@@ -34,7 +34,7 @@ public class InputService {
 
         // Keyboard events
         scene.setOnKeyPressed(e -> {
-            log.debug("Key pressed: {}", e.getCode());
+            log.info("Key pressed: {}", e.getCode());
             eventBus.publish(StarfieldInputEvent.keyPressed(e));
         });
         scene.setOnKeyReleased(e -> {

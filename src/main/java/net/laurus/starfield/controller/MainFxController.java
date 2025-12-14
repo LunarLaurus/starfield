@@ -1,10 +1,14 @@
 package net.laurus.starfield.controller;
 
+import static net.laurus.starfield.model.ColourPalette.HUMAN_EXPLORATION_LIFE_TO_EMPTY;
+
 import java.util.List;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyEvent;
@@ -15,6 +19,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.laurus.starfield.app.ui.component.StarCanvas3D;
+import net.laurus.starfield.model.ColourPalette;
+import net.laurus.starfield.model.GridPlane;
 import net.laurus.starfield.model.Star;
 import net.laurus.starfield.service.factory.StarFactory;
 
@@ -46,20 +52,56 @@ public class MainFxController {
     @FXML
     private Slider distanceSlider;
 
+    @FXML
+    private Label gridPanelLabel;
+
+    @FXML
+    private CheckBox xyPlaneCheckBox;
+
+    @FXML
+    private CheckBox xzPlaneCheckBox;
+
+    @FXML
+    private CheckBox yzPlaneCheckBox;
+
+    @FXML
+    private ComboBox<ColourPalette> paletteComboBox;
+
     private StarCanvas3D starCanvasView;
 
     @FXML
     public void initialize() {
         statusLabel.setText("No data loaded.");
+        xyPlaneCheckBox.setSelected(false);
+        xzPlaneCheckBox.setSelected(false);
+        yzPlaneCheckBox.setSelected(false);
         starCanvasView = new StarCanvas3D(starPanel);
 
+        paletteComboBox.getItems().setAll(ColourPalette.values());
+        paletteComboBox.getSelectionModel().select(HUMAN_EXPLORATION_LIFE_TO_EMPTY);
+
         // Request focus so key events go to the canvas
-        loadButton.setFocusTraversable(false);
-        distanceSlider.setFocusTraversable(false);
-        starCanvasView.getCanvas().setFocusTraversable(true);
-        starCanvasView.getCanvas().requestFocus();
+        configureFocusTraversal();
 
         log.info("MainFxController initialized and StarCanvas3DView created");
+    }
+
+    /**
+     * Configures focus traversal so that key events are directed to the canvas,
+     * while other UI elements do not take initial focus.
+     */
+    private void configureFocusTraversal() {
+        // Prevent buttons and controls from grabbing focus
+        loadButton.setFocusTraversable(false);
+        distanceSlider.setFocusTraversable(false);
+        paletteComboBox.setFocusTraversable(false);
+        xyPlaneCheckBox.setFocusTraversable(false);
+        xzPlaneCheckBox.setFocusTraversable(false);
+        yzPlaneCheckBox.setFocusTraversable(false);
+
+        // Ensure canvas receives initial focus for key input
+        starCanvasView.getCanvas().setFocusTraversable(true);
+        starCanvasView.getCanvas().requestFocus();
     }
 
     public void updateLabels() {
@@ -119,6 +161,11 @@ public class MainFxController {
     public void updateStatus(String text) {
         log.info("Status updated: {}", text);
         statusLabel.setText(text);
+    }
+
+    public void toggleGrid(GridPlane plane) {
+        log.info("Grid plane update {}", plane);
+        starCanvasView.toggleGrid(plane);
     }
 
     public void updateSlider(double val) {
